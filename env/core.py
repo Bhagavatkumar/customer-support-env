@@ -29,11 +29,11 @@ class CustomerSupportEnv:
     def step(self, action):
         self.step_count += 1
 
-        #  CRITICAL: always evaluate THIS action only
+        #  ALWAYS evaluate current action
         reward = grade(self.current_task, [action])
 
-        #  CRITICAL: allow at least 1 step per task
-        done = self.step_count >= 1
+        #  ALWAYS finish task in one step (CRITICAL FOR VALIDATOR)
+        done = True
 
         return [
             {
