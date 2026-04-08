@@ -1,0 +1,52 @@
+name: customer-support-resolution-env
+version: 1.0
+description: A real-world simulation environment for customer support ticket resolution using AI agents.
+
+entry_point: app:app
+
+environment:
+  name: csre
+  version: 1.0
+
+endpoints:
+  reset: /reset
+  step: /step
+  state: /state
+
+observation_space:
+  type: object
+  properties:
+    ticket_id:
+      type: string
+    message:
+      type: string
+    history:
+      type: array
+      items:
+        type: object
+    step_count:
+      type: integer
+
+action_space:
+  type: object
+  properties:
+    action_type:
+      type: string
+    content:
+      type: string
+
+reward_range: [0.0, 1.0]
+
+tasks:
+  - id: easy
+    description: Password reset issue
+  - id: medium
+    description: Billing dispute
+  - id: hard
+    description: Account ban appeal
+
+metrics:
+  - name: task_success
+    description: Measures successful resolution
+  - name: efficiency
+    description: Measures steps taken to solve
