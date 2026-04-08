@@ -8,7 +8,9 @@ env = CustomerSupportEnv()
 def home():
     return {"message": "CSRE running"}
 
+# ✅ FIX: GET + POST दोनों
 @app.get("/reset")
+@app.post("/reset")
 def reset():
     return env.reset()
 
