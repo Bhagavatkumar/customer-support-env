@@ -8,7 +8,6 @@ env = CustomerSupportEnv()
 def home():
     return {"message": "CSRE running"}
 
-# ✅ FIX: GET + POST दोनों
 @app.get("/reset")
 @app.post("/reset")
 def reset():
@@ -21,3 +20,7 @@ def state():
 @app.post("/step")
 def step(action: dict):
     return env.step(action)
+
+# IMPORTANT (add this)
+def main():
+    return app
