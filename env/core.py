@@ -1,6 +1,5 @@
 from env.tasks import TASKS
 from env.grader import grade
-
 import random
 
 class CustomerSupportEnv:
@@ -32,16 +31,13 @@ class CustomerSupportEnv:
     def step(self, action):
         self.step_count += 1
 
-        # IMPORTANT: full action store
-        self.history.append({
-            "action_type": action.get("action_type", ""),
-            "content": action.get("content", "")
-        })
+        # store history (optional)
+        self.history.append(action)
 
-        #  grader call
-        reward = grade(self.current_task, self.history)
+        # CRITICAL FIX: evaluate ONLY current action
+        reward = grade(self.current_task, [action])
 
-        done = reward > 0.5
+        done = reward > 0.3   # relaxed threshold
 
         return [
             {
