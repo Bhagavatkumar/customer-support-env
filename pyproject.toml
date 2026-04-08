@@ -1,0 +1,17 @@
+[project]
+name = "customer-support-env"
+version = "0.1.0"
+description = "Customer Support Resolution Environment"
+authors = [
+    {name = "Bhagavat Kumar"}
+]
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "requests",
+    "pydantic"
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
