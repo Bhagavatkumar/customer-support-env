@@ -6,17 +6,15 @@ class CustomerSupportEnv:
     def __init__(self):
         self.current_task = None
         self.step_count = 0
-        self.history = []
 
     def reset(self):
         self.current_task = random.choice(TASKS)
         self.step_count = 0
-        self.history = []
 
         return {
             "ticket_id": self.current_task["id"],
             "message": self.current_task["message"],
-            "history": self.history,
+            "history": [],
             "step_count": self.step_count
         }
 
@@ -24,26 +22,24 @@ class CustomerSupportEnv:
         return {
             "ticket_id": self.current_task["id"],
             "message": self.current_task["message"],
-            "history": self.history,
+            "history": [],
             "step_count": self.step_count
         }
 
     def step(self, action):
         self.step_count += 1
 
-        # store history (optional)
-        self.history.append(action)
-
-        #  CRITICAL FIX: evaluate ONLY current action
+        #  CRITICAL: always evaluate THIS action only
         reward = grade(self.current_task, [action])
 
-        done = reward > 0.3   # relaxed threshold
+        #  CRITICAL: allow at least 1 step per task
+        done = self.step_count >= 1
 
         return [
             {
                 "ticket_id": self.current_task["id"],
                 "message": self.current_task["message"],
-                "history": self.history,
+                "history": [action],
                 "step_count": self.step_count
             },
             reward,
