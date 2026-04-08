@@ -4,7 +4,28 @@ version = "0.1.0"
 description = "Customer Support Resolution Environment"
 authors = [
     {name = "Bhagavat Kumar"}
+][project]
+name = "customer-support-env"
+version = "0.1.0"
+description = "Customer Support Resolution Environment"
+authors = [
+    {name = "Bhagavat Kumar"}
 ]
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "requests",
+    "pydantic",
+    "openenv-core>=0.2.0"
+]
+
+# ✅ VERY IMPORTANT (missing था)
+[project.scripts]
+server = "app:app"
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
 dependencies = [
     "fastapi",
     "uvicorn",
