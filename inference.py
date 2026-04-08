@@ -26,13 +26,13 @@ def run_episode():
     while not done:
         step += 1
 
-        # ✅ SAFE extraction
+        # SAFE extraction
         if isinstance(state, dict):
             message = state.get("message", "")
         else:
             message = str(state)
 
-        # ✅ fallback safe action (no crash)
+        # fallback safe action (no crash)
         action_text = "I will help you resolve your issue"
 
         # OPTIONAL LLM call (safe guarded)
