@@ -18,10 +18,8 @@ dependencies = [
     "pydantic",
     "openenv-core>=0.2.0"
 ]
-
-# ✅ VERY IMPORTANT (missing था)
 [project.scripts]
-server = "app:app"
+server = "app:main"
 
 [build-system]
 requires = ["setuptools", "wheel"]
