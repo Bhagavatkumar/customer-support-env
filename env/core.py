@@ -34,7 +34,7 @@ class CustomerSupportEnv:
         # store history (optional)
         self.history.append(action)
 
-        # CRITICAL FIX: evaluate ONLY current action
+        #  CRITICAL FIX: evaluate ONLY current action
         reward = grade(self.current_task, [action])
 
         done = reward > 0.3   # relaxed threshold
