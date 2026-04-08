@@ -1,21 +1,12 @@
 import os
 import requests
-from openai import OpenAI
 
 API_BASE_URL = os.getenv("API_BASE_URL", "https://bhagavatkumar-customer-support-env-v2.hf.space")
-MODEL_NAME = os.getenv("MODEL_NAME", "gpt-4.1-mini")
+MODEL_NAME = os.getenv("MODEL_NAME", "baseline")
 HF_TOKEN = os.getenv("HF_TOKEN")
 
-client = OpenAI(
-    base_url="https://api.openai.com/v1",
-    api_key=HF_TOKEN
-)
-
 def run_episode():
-    task = "customer-support"
-    env_name = "csre"
-
-    print(f"[START] task={task} env={env_name} model={MODEL_NAME}")
+    print(f"[START] task=csre env=customer-support model={MODEL_NAME}")
 
     state = requests.post(f"{API_BASE_URL}/reset").json()
 
@@ -26,35 +17,24 @@ def run_episode():
     while not done:
         step += 1
 
-        # SAFE extraction
+        # FIX: safe handling (NO state["message"])
         if isinstance(state, dict):
             message = state.get("message", "")
         else:
-            message = str(state)
-
-        # fallback safe action (no crash)
-        action_text = "I will help you resolve your issue"
-
-        # OPTIONAL LLM call (safe guarded)
-        try:
-            response = client.chat.completions.create(
-                model=MODEL_NAME,
-                messages=[{"role": "user", "content": message}]
-            )
-            action_text = response.choices[0].message.content[:50]
-        except:
-            pass  # fallback use
+            message = ""
 
         action = {
             "action_type": "respond",
-            "content": action_text
+            "content": "I will help you resolve your issue"
         }
 
         response = requests.post(f"{API_BASE_URL}/step", json=action).json()
 
-        # SAFE unpacking
-        if isinstance(response, list) and len(response) >= 3:
-            state, reward, done = response[:3]
+        # FIX: correct unpack
+        if isinstance(response, list):
+            state = response[0]
+            reward = response[1]
+            done = response[2]
         else:
             state = response
             reward = 0.0
@@ -63,7 +43,7 @@ def run_episode():
         rewards.append(reward)
 
         print(
-            f"[STEP] step={step} action={action_text} "
+            f"[STEP] step={step} action=respond "
             f"reward={reward:.2f} done={str(done).lower()} error=null"
         )
 
@@ -74,7 +54,6 @@ def run_episode():
         f"[END] success={str(success).lower()} "
         f"steps={step} rewards={rewards_str}"
     )
-
 
 if __name__ == "__main__":
     run_episode()
