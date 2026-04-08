@@ -16,4 +16,7 @@ def grade(task, actions):
     if any(a.get("action_type") == "close" for a in actions):
         score += 0.2
 
-    return min(score, 1.0)
+    # CRITICAL FIX: strict range (0,1)
+    score = max(0.01, min(score, 0.99))
+
+    return score
