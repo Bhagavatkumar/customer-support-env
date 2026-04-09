@@ -1,19 +1,38 @@
 import os
 import requests
+from openai import OpenAI
 
+#  MUST use env variables
 API_BASE_URL = os.getenv("API_BASE_URL", "https://bhagavatkumar-customer-support-env-v2.hf.space")
 MODEL_NAME = os.getenv("MODEL_NAME", "gpt-4.1-mini")
+HF_TOKEN = os.getenv("HF_TOKEN")
+
+#  CRITICAL: OpenAI client with proxy
+client = OpenAI(
+    base_url=API_BASE_URL,
+    api_key=HF_TOKEN
+)
 
 def run_task(task_id):
     print(f"[START] task={task_id} env=csre model={MODEL_NAME}")
 
     state = requests.post(f"{API_BASE_URL}/reset").json()
 
-    step = 1
+    #  MUST CALL LLM (THIS FIXES YOUR ERROR)
+    try:
+        llm_response = client.chat.completions.create(
+            model=MODEL_NAME,
+            messages=[{"role": "user", "content": state.get("message", "")}]
+        )
+        action_text = llm_response.choices[0].message.content[:50]
+        error_msg = "null"
+    except Exception as e:
+        action_text = "Resolving your issue"
+        error_msg = str(e)
 
     action = {
         "action_type": "respond",
-        "content": "We will resolve your issue immediately"
+        "content": action_text
     }
 
     response = requests.post(f"{API_BASE_URL}/step", json=action).json()
@@ -25,17 +44,14 @@ def run_task(task_id):
         reward = 0.5
         done = True
 
-    #  ensure valid range
     reward = max(0.01, min(0.99, reward))
 
-    print(f"[STEP] step={step} action=respond reward={reward:.2f} done={str(done).lower()} error=null")
+    print(f"[STEP] step=1 action=respond reward={reward:.2f} done={str(done).lower()} error={error_msg}")
 
-    score = reward
-
-    print(f"[END] success=true steps=1 score={score:.2f} rewards={reward:.2f}")
+    print(f"[END] success=true steps=1 score={reward:.2f} rewards={reward:.2f}")
 
 
 if __name__ == "__main__":
-    #  RUN MULTIPLE TASKS (CRITICAL FIX)
+    #  RUN MULTIPLE TASKS
     for i in range(3):
         run_task(i)
