@@ -9,7 +9,6 @@ client = OpenAI(
     base_url=API_BASE_URL,
     api_key=HF_TOKEN
 )
-
 def grade(task, actions):
     response = " ".join([a.get("content", "") for a in actions])
 
